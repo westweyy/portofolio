@@ -47,6 +47,10 @@
     --blue: #2f5bff;
     --green: #2fbf6c;
   }
+  html.dark {
+    --bg: #141312; --sheet: #1d1b19; --ink: #f4f0e8;
+    --muted: #a8a29a; --line: rgba(244, 240, 232, .12);
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body {
@@ -66,7 +70,8 @@
   .hero-cap i { display: block; margin: 12px auto 0; width: 22px; height: 36px; border: 2px solid var(--muted); border-radius: 12px; position: relative; }
   .hero-cap i::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: var(--muted); animation: wheel 1.6s infinite; }
   /* Navigasi atas */
-  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px clamp(18px, 6vw, 80px); background: rgba(235, 230, 221, .82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px clamp(18px, 6vw, 80px); background: rgba(235, 230, 221, .82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); transition: padding .25s, background .25s; }
+  .nav.scrolled { padding: 8px clamp(18px, 6vw, 80px); background: rgba(235, 230, 221, .92); }
   .nav-brand { font-size: 1rem; font-weight: 700; letter-spacing: -.03em; text-decoration: none; white-space: nowrap; }
   .nav-brand span { color: var(--orange); }
   .nav-links { display: flex; align-items: center; gap: 6px; }
@@ -74,12 +79,21 @@
   .nav-links a:hover { color: var(--ink); background: rgba(27, 26, 25, .07); }
   .nav-links a.cta { background: var(--ink); color: var(--sheet); }
   .nav-links a.cta:hover { background: var(--orange); color: var(--sheet); }
+  .nav-toggle { display: none; width: 38px; height: 38px; border: 0; border-radius: 10px; background: rgba(27, 26, 25, .06); cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .nav-toggle span { width: 18px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .25s, opacity .25s; }
+  .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .theme-toggle { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(27,26,25,.06); color: var(--ink); font-size: .75rem; font-weight: 600; cursor: pointer; }
   html.respect-rm .nav-links a { transition: none; }
   #works, #contact { scroll-margin-top: 76px; }
-  @media (max-width: 520px) {
+  @media (max-width: 640px) {
     .nav { padding: 10px 16px; }
     .nav-brand { font-size: .92rem; }
-    .nav-links a { min-height: 34px; padding: 0 11px; font-size: .72rem; }
+    .nav-toggle { display: flex; }
+    .nav-links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 4px; padding: 10px 16px 16px; background: rgba(235, 230, 221, .96); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); display: none; }
+    .nav-links.open { display: flex; }
+    .nav-links a { justify-content: center; }
   }
   @keyframes wheel { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(10px); } }
 
@@ -242,11 +256,35 @@
 
 <nav class="nav" aria-label="Navigasi utama">
   <a class="nav-brand" href="#hero">Fuad<span>.</span></a>
-  <div class="nav-links">
-    <a href="#works">Lihat Karya</a>
-    <a class="cta" href="#contact">Hubungi Saya</a>
+  <button class="theme-toggle" type="button" aria-label="Ganti tema" onclick="document.documentElement.classList.toggle('dark')">Theme</button>
+  <button class="nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="navMenu"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="navMenu">
+    <a href="#hello">Tentang</a>
+    <a href="#works">Karya</a>
+    <a href="#workflow">Proses</a>
+    <a class="cta" href="#contact">Hubungi</a>
   </div>
 </nav>
+<script>
+(function () {
+  const btn = document.querySelector(".nav-toggle");
+  const menu = document.getElementById("navMenu");
+  if (btn && menu) {
+    btn.addEventListener("click", () => {
+      const open = menu.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => {
+      menu.classList.remove("open");
+      btn.setAttribute("aria-expanded", "false");
+    }));
+  }
+  const nav = document.querySelector(".nav");
+  const onScroll = () => { if (nav) nav.classList.toggle("scrolled", window.scrollY > 24); };
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+})();
+</script>
 
 <section class="hero" id="hero" aria-label="Sampul">
   <canvas id="heroCanvas" aria-hidden="true"></canvas>
@@ -298,6 +336,14 @@
     <div class="wf reveal" id="wf"></div>
   </section>
 
+  <section class="block" id="notes">
+    <div class="title-wrap reveal"><div class="t"><h2 class="title">Catatan.</h2><p class="sub">Tulisan singkat dan update.</p></div></div>
+    <div id="notesList" class="reveal" style="max-width:720px;margin:0 auto;display:grid;gap:12px"></div>
+  </section>
+  <section class="block" id="testimonials">
+    <div class="title-wrap reveal"><div class="t"><h2 class="title">Testimoni.</h2><p class="sub">Apa kata klien dan rekan kerja.</p></div></div>
+    <div id="testiList" class="reveal" style="display:grid;gap:16px;max-width:720px;margin:0 auto"></div>
+  </section>
   <section class="block collab" id="contact">
     <div class="stage" id="stage">
       <h2 class="cl" id="clTitle"><span class="w" style="--d:0s;--od:.3s">Let's</span> <span class="w" style="--d:.22s;--od:0s">Collaborate</span></h2>
@@ -346,7 +392,14 @@ const DATA = {
     { k: "Focus", v: "Graphic Design · 3D · Motion" },
     { k: "Status", v: "Open for collaborations" }
   ],
-  cvUrl: "",                                  // mis. "cv.pdf" agar tombol Unduh CV muncul
+   cvUrl: "",                                  // mis. "cv.pdf" agar tombol Unduh CV muncul
+   testimonials: [
+     { name: "Klien A", role: "Brand X", text: "Desainnya rapi dan komunikatif, proses cepat." },
+     { name: "Rekan B", role: "Studio Y", text: "Visual 3D-nya menarik dan profesional." }
+   ],
+   notes: [
+     { title: "Update 2026", text: "Menambahkan fitur dark mode dan testimonials." }
+   ],
   contacts: [                                 // urutan: kolom kiri lalu kanan
     { icon: "@",  text: "ariffuadsafwan@gmail.com", href: "mailto:ariffuadsafwan@gmail.com" },
     { icon: "Pin", text: "Indonesia" },
@@ -380,32 +433,35 @@ const DATA = {
   sections: [
     {
       title: "College Work", sub: "Illustration · Poster Design", swap: false,
-      items: [
-        { layout: "wide", title: "Judul Buku Cerita", kicker: "Book Spread",
-          desc: "", tools: ["Cs", "Ps"], colors: ["#2fbf6c", "#1c8f5a"], images: [] },
-        { layout: "split", media: "poster", title: "Poster Kampanye", kicker: "Poster Design",
-          desc: "Poster edukasi tentang bahaya membagikan informasi pribadi berlebihan di media sosial. Konsep visual memakai pencahayaan dramatis, elemen simbolik, dan palet gelap.",
-          tools: ["Cs", "Ps"], colors: ["#2f5bff", "#0e1a5c"], images: [] }
-      ]
+items: [
+         { layout: "wide", title: "Judul Buku Cerita", kicker: "Book Spread",
+           desc: "", tools: ["Cs", "Ps"], colors: ["#2fbf6c", "#1c8f5a"], images: ["https://picsum.photos/seed/book/800/450"] },
+         { layout: "split", media: "poster", title: "Poster Kampanye", kicker: "Poster Design",
+           desc: "Poster edukasi tentang bahaya membagikan informasi pribadi berlebihan di media sosial. Konsep visual memakai pencahayaan dramatis, elemen simbolik, dan palet gelap.",
+           tools: ["Cs", "Ps"], colors: ["#2f5bff", "#0e1a5c"], images: ["https://picsum.photos/seed/poster/600/800"] }
+       ]
     },
     {
       title: "Client Project", sub: "Selected Works", swap: true,
-      items: [
-        { layout: "split", rev: true, media: "phone", title: "Instagram Carousel", kicker: "Social Media Design",
-          desc: "Rangkaian konten carousel untuk media sosial klien: seragam, mudah dikenali, dan cepat dipakai ulang.",
-          tools: ["Ps"], colors: ["#22c55e", "#0f6b35"], images: [] },
-        { layout: "row", media: "poster", title: "Advertising Poster Concepts", kicker: "Personal Project",
-          desc: "", tools: ["Ps", "Bl"], colors: ["#6b7280", "#111827"], images: [], labels: ["Konsep A", "Konsep B", "Konsep C"] },
-        { layout: "row", media: "phone", title: "Short-Form Video Editing", kicker: "Selected Works",
-          desc: "", tools: ["Ae"], colors: ["#7a5cff", "#2b1b8f"], images: [], labels: ["Video 1", "Video 2", "Video 3"] }
-      ]
+items: [
+         { layout: "split", rev: true, media: "phone", title: "Instagram Carousel", kicker: "Social Media Design",
+           desc: "Rangkaian konten carousel untuk media sosial klien: seragam, mudah dikenali, dan cepat dipakai ulang.",
+           tools: ["Ps"], colors: ["#22c55e", "#0f6b35"], images: ["https://picsum.photos/seed/carousel/420/860"] },
+         { layout: "row", media: "poster", title: "Advertising Poster Concepts", kicker: "Personal Project",
+           desc: "", tools: ["Ps", "Bl"], colors: ["#6b7280", "#111827"], images: ["https://picsum.photos/seed/adv1/600/800", "https://picsum.photos/seed/adv2/600/800", "https://picsum.photos/seed/adv3/600/800"], labels: ["Konsep A", "Konsep B", "Konsep C"] },
+         { layout: "row", media: "phone", title: "Short-Form Video Editing", kicker: "Selected Works",
+           desc: "", tools: ["Ae"], colors: ["#7a5cff", "#2b1b8f"], images: ["https://picsum.photos/seed/vid1/420/860", "https://picsum.photos/seed/vid2/420/860", "https://picsum.photos/seed/vid3/420/860"], labels: ["Video 1", "Video 2", "Video 3"] }
+       ]
     }
   ],
   workflow: {
     project: "Poster Kampanye",
     steps: [
-      { name: "Background" }, { name: "Elemen" }, { name: "Compositing" },
-      { name: "Karakter" }, { name: "Final" }
+      { name: "Background", image: "https://picsum.photos/seed/wf1/600/800" },
+      { name: "Elemen", image: "https://picsum.photos/seed/wf2/600/800" },
+      { name: "Compositing", image: "https://picsum.photos/seed/wf3/600/800" },
+      { name: "Karakter", image: "https://picsum.photos/seed/wf4/600/800" },
+      { name: "Final", image: "https://picsum.photos/seed/wf5/600/800" }
     ],
     colors: ["#2f5bff", "#0e1a5c"]
   }
@@ -492,6 +548,8 @@ $("heroLine").textContent = DATA.line;
 $("bio").textContent = DATA.bio;
 $("facts").innerHTML = DATA.facts.map((f) => "<li><span>" + esc(f.k) + "</span><b>" + esc(f.v) + "</b></li>").join("");
 $("footer").textContent = "© " + new Date().getFullYear() + " " + DATA.name;
+$("testiList").innerHTML = (DATA.testimonials || []).map((t) => '<blockquote style="border-left:3px solid var(--orange);padding:8px 16px;color:var(--muted);font-size:.9rem"><p>"' + esc(t.text) + '"</p><cite style="display:block;margin-top:6px;font-style:normal;font-weight:600;color:var(--ink);font-size:.8rem">' + esc(t.name) + " — " + esc(t.role) + "</cite></blockquote>").join("");
+$("notesList").innerHTML = (DATA.notes || []).map((n) => '<article style="padding:12px 0;border-bottom:1px solid var(--line)"><h3 style="font-size:1rem;letter-spacing:-.02em">' + esc(n.title) + '</h3><p style="color:var(--muted);font-size:.85rem;margin-top:4px">' + esc(n.text) + "</p></article>").join("");
 
 $("connect").innerHTML = DATA.contacts.map((c) => {
   const inner = c.href ? '<a href="' + esc(c.href) + '" target="_blank" rel="noopener">' + esc(c.text) + "</a>" : esc(c.text);
