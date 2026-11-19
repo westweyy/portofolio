@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRODESA (Portal Desa Digital) — Detail Project</title>
+<meta name="description" content="Detail PRODESA: sistem pelayanan administrasi desa dengan 14 jenis surat dinamis, alur persetujuan berjenjang, RBAC 8 role, dan verifikasi QR.">
+<meta name="author" content="Muhammad Arif Fuad Shafwan">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23f4f0e8'/%3E%3Ccircle cx='28' cy='28' r='15' fill='%232f5bff'/%3E%3Ccircle cx='46' cy='46' r='8' fill='%23ff7a2f'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#ebe6dd">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="Navigasi utama">
+  <a class="nav-brand" href="index.html">Fuad<span>.</span></a>
+  <button class="nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="navMenu"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="navMenu">
+    <a href="index.html">Beranda</a>
+    <a href="index.html#works">Karya</a>
+    <a class="cta" href="index.html#contact">Kontak</a>
+  </div>
+</nav>
+
+<main class="sheet detail" id="prodesaDetail">
+  <section class="block detail-hero reveal">
+    <a class="back" href="index.html#works">← Kembali ke karya</a>
+    <div class="detail-kicker">PKM Project · Digital Village · e-Government Platform</div>
+    <h1>PRODESA <span>(Portal Desa Digital)</span></h1>
+    <p class="detail-lead">Sistem pelayanan administrasi desa: pengajuan surat online dengan workflow approval berjenjang, RBAC 8 role, versioning dokumen, verifikasi QR, dan dashboard analitik per peran.</p>
+    <div class="detail-meta">
+      <span>Pembuat &amp; Developer</span>
+      <span>2025–2026 · Produksi</span>
+      <span>Desa Kumpay, Kec. Banjarsari, Kab. Lebak</span>
+    </div>
+    <div class="detail-stats">
+      <div><b>14</b><span>Jenis Surat</span></div>
+      <div><b>8</b><span>Role</span></div>
+      <div><b>36</b><span>Permission</span></div>
+    </div>
+    <div class="detail-links">
+      <a class="proj-link" href="https://desa.ranggamrw.my.id" target="_blank" rel="noopener">Kunjungi Live</a>
+      <a class="proj-link" href="https://github.com/ranggamaulana111111-bit/desamoderen" target="_blank" rel="noopener">Lihat GitHub</a>
+    </div>
+  </section>
+
+  <section class="detail-gallery wf reveal" aria-label="Tampilan PRODESA">
+    <figure class="shot shot-wide"><img src="img/prodesa-beranda.png" alt="Beranda portal PRODESA Desa Kumpay" loading="lazy" decoding="async"><figcaption>Beranda portal desa</figcaption></figure>
+    <figure class="shot"><img src="img/prodesa-layanan.png" alt="Halaman layanan surat PRODESA" loading="lazy" decoding="async"><figcaption>Layanan surat digital</figcaption></figure>
+    <figure class="shot"><img src="img/prodesa-statistik.png" alt="Statistik penggunaan PRODESA" loading="lazy" decoding="async"><figcaption>Statistik desa</figcaption></figure>
+    <figure class="shot"><img src="img/prodesa-daftar.png" alt="Halaman pendaftaran warga PRODESA" loading="lazy" decoding="async"><figcaption>Pendaftaran warga</figcaption></figure>
+  </section>
+
+  <section class="block detail-block reveal">
+    <h2>Alur persetujuan surat</h2>
+    <p class="detail-note">State machine dengan transisi yang digerbangi permission, bukan sekadar pemeriksaan role.</p>
+    <ol class="detail-flow">
+      <li><b>01</b><strong>Warga</strong><span>Ajukan surat</span></li>
+      <li><b>02</b><strong>Operator Pelayanan</strong><span>Review</span></li>
+      <li><b>03</b><strong>Sekretaris Desa</strong><span>Verifikasi</span></li>
+      <li><b>04</b><strong>Kepala Desa</strong><span>Setujui &amp; TTD</span></li>
+      <li><b>05</b><strong>Dokumen Selesai</strong><span>QR verifikasi</span></li>
+    </ol>
+  </section>
+
+  <section class="block detail-cols reveal">
+    <article><h2>Konteks</h2><p>Desa Kumpay masih mengelola surat-menyurat secara manual: warga datang ke kantor, formulir diisi di atas kertas, dan status pengajuan hanya bisa ditanyakan langsung. Prodesa memindahkan alur ini ke web.</p></article>
+    <article><h2>Masalah</h2><p>Alur manual membuat warga tidak tahu posisi pengajuannya, arsip mudah hilang, dan tidak ada jejak audit siapa memverifikasi apa. Setiap jenis surat punya format dan syarat berbeda sehingga petugas juga sering salah template.</p></article>
+    <article><h2>Pendekatan</h2><p>Semua jenis surat dijadikan data, bukan hardcode: template isi, field form, aturan validasi, dan syarat dokumen disimpan di tabel <code>letter_configs</code> sebagai JSON. Alur persetujuan menjadi state machine yang setiap transisinya digerbangi permission Spatie.</p></article>
+    <article><h2>Implementasi</h2><p>Laravel 11 monolith dengan Blade + Tailwind. Form dinamis digenerate dari config; setiap revisi menyimpan snapshot data dan salinan PDF sebagai versi baru secara non-destruktif, lengkap dengan diff. Surat selesai mendapat hash verifikasi publik ber-QR, notifikasi dikirim via Telegram dan webhook, serta antrean pengambilan dikelola dengan scan QR.</p></article>
+  </section>
+
+  <section class="block detail-block reveal">
+    <h2>Fitur inti</h2>
+    <div class="feature-list">
+      <article><h3>RBAC multi-role</h3><p>8 role (Super Admin, Operator Pelayanan, Sekretaris Desa, Kepala Desa, RT, RW, Warga, Lembaga) dengan 36 permission granular via Spatie, dipaksa di route middleware dan di dalam state machine.</p></article>
+      <article><h3>Workflow approval berjenjang</h3><p><code>submitted → verified → approved_operator → approved_sekdes → approved_kades → completed</code>, plus jalur <em>revision</em> yang hanya bisa di-resubmit pemohon dan jalur <em>rejected</em>.</p></article>
+      <article><h3>Dynamic letter system</h3><p>14 jenis surat didefinisikan sebagai data: <code>body_template</code> dengan placeholder, fields JSON bertipe text/date/select lengkap rules validasi, syarat dokumen, dan kode klasifikasi.</p></article>
+      <article><h3>Document versioning</h3><p>Setiap revisi membuat versi baru: snapshot <code>data_tambahan</code> dan salinan PDF <code>_v{n}</code> di disk private. Restore tidak menimpa, ia membuat versi baru dan mencatat activity log.</p></article>
+      <article><h3>Verifikasi &amp; antrean QR</h3><p>Surat selesai punya hash verifikasi publik yang dirender jadi QR; petugas mengelola antrean pengambilan dengan scan QR per nomor.</p></article>
+      <article><h3>Analytics &amp; monitoring</h3><p>Dashboard 4 chart Chart.js: tren bulanan, jenis surat populer, approval/rejection rate; monitoring queue internal (waiting/failed jobs) dengan retry.</p></article>
+    </div>
+  </section>
+
+  <section class="block detail-cols reveal">
+    <article><h2>Teknologi</h2><ul class="detail-tags">
+      <li><b>Laravel 11</b><span>Core application</span></li>
+      <li><b>MySQL</b><span>Data layer</span></li>
+      <li><b>Spatie Permission</b><span>Authorization / RBAC</span></li>
+      <li><b>Blade</b><span>Web interface (158 views)</span></li>
+      <li><b>Tailwind CSS</b><span>UI styling</span></li>
+      <li><b>Chart.js</b><span>Analytics visualization</span></li>
+      <li><b>DomPDF</b><span>Surat resmi PDF</span></li>
+      <li><b>QR Code</b><span>Verifikasi dokumen &amp; antrean</span></li>
+      <li><b>Telegram Bot API</b><span>Notifikasi status</span></li>
+    </ul></article>
+    <article><h2>Hasil</h2><p>Prodesa live di <a href="https://desa.ranggamrw.my.id" target="_blank" rel="noopener">desa.ranggamrw.my.id</a> dan dipakai melayani warga Desa Kumpay: 14 jenis surat dinamis, alur persetujuan berjenjang yang tercatat di approval history, dan dashboard khusus untuk Kepala Desa, Sekretaris, serta warga.</p>
+      <h2 class="detail-sub">Pelajaran</h2>
+      <ul class="detail-lessons">
+        <li>User desa butuh UI yang sangat sederhana. Yang terasa jelas bagi developer belum tentu jelas bagi mereka.</li>
+        <li>PDF generation lebih kompleks dari yang dikira, terutama untuk format surat resmi.</li>
+        <li>Mendengarkan feedback pengguna sungguhan mengubah cara saya memikirkan UX.</li>
+      </ul>
+    </article>
+  </section>
+</main>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Tampilan gambar diperbesar" hidden>
+  <button class="x" id="lbClose" type="button" aria-label="Tutup">&times;</button>
+  <button class="p" id="lbPrev" type="button" aria-label="Gambar sebelumnya">&#8249;</button>
+  <img id="lbImg" alt="">
+  <button class="n" id="lbNext" type="button" aria-label="Gambar berikutnya">&#8250;</button>
+  <div class="meta"><b id="lbCap"></b><span id="lbCount"></span></div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
